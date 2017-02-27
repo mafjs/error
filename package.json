@@ -1,0 +1,35 @@
+{
+  "name": "maf-error",
+  "version": "0.0.0",
+  "description": "checkable errors",
+  "main": "index.js",
+  "files": [
+    "src",
+    "index.js",
+    "modifyGlobalError.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postversion": "git push origin && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mafjs/error.git"
+  },
+  "keywords": [
+    "maf"
+  ],
+  "author": "alekzonder <alekzonder@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mafjs/error/issues"
+  },
+  "homepage": "https://github.com/mafjs/error#readme",
+  "devDependencies": {
+    "eslint": "^3.16.1",
+    "log4js-nested": "^1.0.1"
+  },
+  "dependencies": {
+    "terror": "^1.3.0"
+  }
+}
