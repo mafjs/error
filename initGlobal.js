@@ -1,0 +1,1 @@
+require('./src/extendGlobalError')(Error);

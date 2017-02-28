@@ -1,227 +1,220 @@
-'use strict';
-
 /**
- * @class
+ * error check chain
  */
-class ErrorCheckChain {
+class CheckChain {
 
     /**
-     * @constructor
-     * @param  {Error} error
-     * @param  {String} entity
-     * @param  {logger} logger
+     * @param {logger} logger
      */
-    constructor (error, entity, logger) {
-
+    constructor (logger) {
         this._logger = logger;
-
-        this._error = error;
-
-        this._entity = null;
-
-        if (entity) {
-            this._entity = entity;
-        }
-
-        this._default = null;
-
-        this._parent = null;
-
+        this._error = null;
         this._checks = [];
     }
 
     /**
-     * set default check callback
+     * set error for check
      *
-     * @param {Function} fn
+     * @param {Error} error
      * @return {this}
      */
-    setDefault (fn) {
-        this._default = fn;
+    setError (error) {
+        this._error = error;
         return this;
     }
 
     /**
-     * set logger object
+     * check error is instanceof class and checkCodes
      *
-     * @param {logger} logger
+     * @param {Error} ErrorClass
+     * @param {Object|Function} codeChecks
      * @return {this}
      */
-    setLogger (logger) {
-        this._logger = logger;
-        return this;
-    }
+    is (ErrorClass, codeChecks) {
 
-    /**
-     * set parent checkChain
-     *
-     * @param {CheckChain} parent
-     */
-    setParent (parent) {
-        this._parent = parent;
-    }
+        this._checks.push((error) => {
 
-    /**
-     * create new checkChain for entity
-     *
-     * @param  {String} entity
-     * @return {ErrorCheckChain}
-     */
-    ifEntity (entity) {
-        if (typeof entity !== 'string') {
-            throw new Error('maf-error: entity argument must be a string');
-        }
-
-        var entityChain = new ErrorCheckChain(this._error, entity, this._logger);
-
-        entityChain.setParent(this);
-
-        this._checks.push(entityChain);
-
-        return entityChain;
-    }
-
-    /**
-     * set callback if code
-     *
-     * @param  {String}   code
-     * @param  {Function} fn
-     * @return {CheckChain}
-     */
-    ifCode (code, fn) {
-
-        if (typeof fn !== 'function') {
-            throw new Error('maf-error: fn argument must be a function');
-        }
-
-        var f = () => {
-            if (this._error.code !== code) {
+            if (this._isInstanceOf(ErrorClass, error) === false) {
                 return false;
             }
 
-            return fn;
-        };
+            if (typeof codeChecks === 'function') {
+                codeChecks(error);
+                return true;
+            }
 
-        f.ifCode = true;
+            if (this._processCodes(error, codeChecks) === true) {
+                return true;
+            }
 
-        this._checks.push(f);
-
-        return this;
-    }
-
-    /**
-     * end parent check chain
-     *
-     * @return {String}
-     */
-    end () {
-        if (this._parent) {
-            return this._parent;
-        }
-
-        return this;
-    }
-
-    /**
-     * run checks
-     *
-     * @param {logger} logger
-     * @return {Boolean}
-     */
-    check () {
-
-        if (this._entity && this._error.entity !== this._entity) {
             return false;
+
+        });
+
+        return this;
+    }
+
+    /**
+     * check error code
+     *
+     * @param {String} code
+     * @param {Function} cb
+     * @return {this}
+     */
+    ifCode (code, cb) {
+
+        this._checks.push((error) => {
+
+            if (this._ifCode(error, code)) {
+                cb(error);
+                return true;
+            }
+
+            return false;
+
+        });
+
+        return this;
+
+    }
+
+    /**
+     * set error fallback
+     *
+     * @param {Function} cb
+     * @return {this}
+     */
+    else (cb) {
+        this._checks.push((error) => {
+            this._debug(`else fallback`);
+            cb(error);
+            return true;
+        });
+
+        return this;
+    }
+
+    /**
+     * check error
+     *
+     * @param {Error} error
+     * @return {Boolean}
+     * @throw {Error}
+     */
+    check (error) {
+
+        if (!error) {
+            if (this._error) {
+                error = this._error;
+            } else {
+                throw new Error('maf-error: no error for check');
+            }
         }
+
+        if (!error && this._error) {
+            error = this._error;
+        }
+
+        this._debug(`run checks`);
+
+        var errorProcessed = false;
 
         for (var i in this._checks) {
 
+            this._debug('step ' + i);
+
             var check = this._checks[i];
 
-            this._debug(`check chain for entity = ${this._entity}, step = ${i}`);
+            var callbackTriggered = check(error);
 
-            if (this._isValidCheck(i, check) === false) {
-                throw new Error('maf-error: check is not a function');
-            }
-
-            if (this._ifInstanceOfCheckChain(i, check)) {
-                var result = check.check(this._logger);
-
-                if (result) {
-                    return true;
-                }
-
-            } else if (this._ifFunction(i, check)) {
-                return true;
+            if (callbackTriggered) {
+                errorProcessed = true;
+                break;
             }
 
         }
 
-        if (!this._entity) {
-
-            if (this._default) {
-                this._debug('maf-error: using default callback function');
-                this._default(this._error);
-                return true;
-            } else {
-                throw new Error('maf-error: no default callback function');
-            }
-
+        if (!errorProcessed) {
+            this._debug('no checks triggered, throw error');
+            throw error;
         }
 
-        return false;
-
+        return true;
     }
 
     /**
      * @private
-     * @param {Number} i
-     * @param {Object} check
+     * @param {Error} ErrorClass
+     * @param {Error} error
      * @return {Boolean}
      */
-    _isValidCheck (i, check) {
-        return check instanceof ErrorCheckChain || typeof check === 'function';
+    _isInstanceOf (ErrorClass, error) {
+        var ErrorClassName = ErrorClass.prototype.name;
+
+        this._debug(`check instanceof: (error.name === ${ErrorClassName})`);
+
+        var bool = (ErrorClassName === error.name);
+
+        this._debug(`(${error.name} === ${ErrorClassName}) => ${bool}`);
+
+        return bool;
     }
 
     /**
      * @private
-     * @param {Number} i
-     * @param {Object} check
+     * @param {Error} error
+     * @param {String} code
      * @return {Boolean}
      */
-    _ifInstanceOfCheckChain (i, check) {
-        return check instanceof ErrorCheckChain;
-    }
+    _ifCode (error, code) {
 
-    /**
-     * @private
-     * @param {Number} i
-     * @param {Object} check
-     * @return {Boolean}
-     */
-    _ifFunction (i, check) {
-        this._debug(`check function entity = ${this._entity}, step = ${i}`);
+        this._debug(`check code: (error.code === ${code})`);
 
-        var fnResult = check();
+        var result = (error.code === code);
 
-        this._debug(fnResult);
+        this._debug(`(${error.code} === ${code}) => ${result}`);
 
-        if (fnResult) {
-            fnResult(this._error);
+        if (result) {
+            this._debug(`exec callback on check (error.code === ${code})`);
             return true;
         }
 
         return false;
+
     }
 
     /**
-     * log debug
-     *
+     * @private
+     * @param {Error} error
+     * @param {Object} codeChecks
+     * @return {Boolean}
+     */
+    _processCodes (error, codeChecks) {
+
+        for (var code in codeChecks) {
+            var cb = codeChecks[code];
+
+            if (this._ifCode(error, code) === true) {
+                cb(error);
+                return true;
+            }
+
+        }
+
+        return false;
+
+    }
+
+    /**
      * @private
      */
     _debug () {
 
-        if (this._logger && this._logger.debug && typeof this._logger.debug === 'function') {
+        if (
+            this._logger &&
+            this._logger.debug &&
+            typeof this._logger.debug === 'function'
+        ) {
             this._logger.debug.apply(this._logger, arguments);
         }
 
@@ -229,4 +222,4 @@ class ErrorCheckChain {
 
 }
 
-module.exports = ErrorCheckChain;
+module.exports = CheckChain;
