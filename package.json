@@ -9,8 +9,8 @@
     "extendGlobalError.js"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/tap test/unit/**/*.js",
-    "test:cov": "npm test -- -J --coverage --coverage-report=html",
+    "test": "./node_modules/.bin/tap test/unit/**/*.js -J --coverage",
+    "test:cov": "npm test -- --coverage-report=html",
     "postversion": "git push origin && git push --tags"
   },
   "repository": {
@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/mafjs/error#readme",
   "devDependencies": {
+    "coveralls": "^2.11.16",
     "eslint": "^3.16.1",
     "log4js-nested": "^1.0.1",
     "tap": "^10.2.2"
@@ -35,10 +36,9 @@
     "terror": "^1.3.0"
   },
   "nyc": {
-      "all": true,
-      "include": [
-          "src/*js"
-      ]
+    "all": true,
+    "include": [
+      "src/*js"
+    ]
   }
-
 }
