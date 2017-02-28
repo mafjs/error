@@ -12,7 +12,7 @@ try {
 } catch (e) {
 
     MyError.ensureCheckChain(e, logger)
-        .is(MyError, {
+        .if(MyError, {
             [MyError.CODES.TEST]: function (error) {
                 console.log(error.message);
             }

@@ -23,10 +23,10 @@ var logBad = function (error) {
 
 // prepare check chain
 var checkChain = Error.createCheckChain(logger)
-    .is(TaskError, {
+    .if(TaskError, {
         [TaskError.CODES.INVALID]: logGood
     })
-    .is(MyError, {
+    .if(MyError, {
         [MyError.CODES.ALLRIGHT]: logGood,
         [MyError.CODES.OMG]: logGood
     })

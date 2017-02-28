@@ -188,7 +188,7 @@ class CheckChain {
      * @param {Object|Function} codeChecks
      * @return {this}
      */
-    is (ErrorClass, codeChecks) {}
+    if (ErrorClass, codeChecks) {}
 
     /**
      * check if code === error.code
@@ -242,11 +242,11 @@ try {
 
     // using global Error ensureCheckChain method
     Error.ensureCheckChain(e)
-        .is(TaskError, {
+        .if(TaskError, {
             [TaskError.CODES.INVALID]: function (error) {},
             [TaskError.CODES.DUPLICATE]: function (error) {},
         })
-        .is(ListError, {
+        .if(ListError, {
             [ListError.CODES.INVALID]: function (error) {}
         })
         .else(function (error) {

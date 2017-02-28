@@ -30,7 +30,7 @@ class CheckChain {
      * @param {Object|Function} codeChecks
      * @return {this}
      */
-    is (ErrorClass, codeChecks) {
+    if (ErrorClass, codeChecks) {
 
         this._checks.push((error) => {
 
@@ -111,11 +111,7 @@ class CheckChain {
             }
         }
 
-        if (!error && this._error) {
-            error = this._error;
-        }
-
-        this._debug(`run checks`);
+        this._debug(`maf-error: run checks`);
 
         var errorProcessed = false;
 

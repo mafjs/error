@@ -26,10 +26,10 @@ try {
 } catch (e) {
 
     Error.ensureCheckChain(e, logger)
-        .is(TaskError, {
+        .if(TaskError, {
             [TaskError.CODES.INVALID]: logGood
         })
-        .is(MyError, {
+        .if(MyError, {
             [MyError.CODES.ALLRIGHT]: logGood,
             [MyError.CODES.OMG]: logGood
         })
