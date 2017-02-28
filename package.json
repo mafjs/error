@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "./node_modules/.bin/tap test/unit/**/*.js",
-    "test:cov": "npm test -- --coverage --coverage-report=html",
+    "test:cov": "npm test -- -J --coverage --coverage-report=html",
     "postversion": "git push origin && git push --tags"
   },
   "repository": {
@@ -33,5 +33,12 @@
   },
   "dependencies": {
     "terror": "^1.3.0"
+  },
+  "nyc": {
+      "all": true,
+      "include": [
+          "src/*js"
+      ]
   }
+
 }

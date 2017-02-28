@@ -1,5 +1,5 @@
 var CheckChain = require('./CheckChain');
-var terror = require('terror');
+var mafError = require('./mafError');
 
 module.exports = function (errorClass) {
 
@@ -26,7 +26,7 @@ module.exports = function (errorClass) {
     errorClass.createCheckChain = createCheckChain;
 
     errorClass.create = function () {
-        return terror.create.apply(terror, arguments);
+        return mafError.create.apply(mafError, arguments);
     };
 
     // new Error object extending

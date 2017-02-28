@@ -1,1 +1,1 @@
-module.exports = require('./src/maf-error');
+module.exports = require('./src/mafError');

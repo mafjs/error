@@ -23,7 +23,7 @@ module.exports = function (terror) {
 
     // terror object modifications
 
-    terror.createCheckChain = terror.prototype.createCheckChain;
+    terror.createCheckChain = createCheckChain;
 
     terror._create = terror.create;
 
@@ -50,8 +50,6 @@ module.exports = function (terror) {
 
         return chain;
     };
-
-    terror.prototype.createCheckChain = createCheckChain;
 
     return terror;
 
