@@ -1,221 +1,220 @@
 /**
- * error check chain
+ * @param {logger} logger
  */
-class CheckChain {
+function CheckChain (logger) {
+    this._logger = logger;
+    this._error = null;
+    this._checks = [];
+}
 
-    /**
-     * @param {logger} logger
-     */
-    constructor (logger) {
-        this._logger = logger;
-        this._error = null;
-        this._checks = [];
-    }
+/**
+ * set error for check
+ *
+ * @param {Error} error
+ * @return {this}
+ */
+CheckChain.prototype.setError = function (error) {
+    this._error = error;
+    return this;
+};
 
-    /**
-     * set error for check
-     *
-     * @param {Error} error
-     * @return {this}
-     */
-    setError (error) {
-        this._error = error;
-        return this;
-    }
+/**
+ * check error is instanceof class and checkCodes
+ *
+ * @param {Error} ErrorClass
+ * @param {Object|Function} codeChecks
+ * @return {this}
+ */
+CheckChain.prototype.if = function (ErrorClass, codeChecks) {
 
-    /**
-     * check error is instanceof class and checkCodes
-     *
-     * @param {Error} ErrorClass
-     * @param {Object|Function} codeChecks
-     * @return {this}
-     */
-    if (ErrorClass, codeChecks) {
+    var that = this;
 
-        this._checks.push((error) => {
+    this._checks.push(function (error) {
 
-            if (this._isInstanceOf(ErrorClass, error) === false) {
-                return false;
-            }
-
-            if (typeof codeChecks === 'function') {
-                codeChecks(error);
-                return true;
-            }
-
-            if (this._processCodes(error, codeChecks) === true) {
-                return true;
-            }
-
+        if (that._isInstanceOf(ErrorClass, error) === false) {
             return false;
+        }
 
-        });
+        if (typeof codeChecks === 'function') {
+            codeChecks(error);
+            return true;
+        }
 
-        return this;
-    }
+        if (that._processCodes(error, codeChecks) === true) {
+            return true;
+        }
 
-    /**
-     * check error code
-     *
-     * @param {String} code
-     * @param {Function} cb
-     * @return {this}
-     */
-    ifCode (code, cb) {
+        return false;
 
-        this._checks.push((error) => {
+    });
 
-            if (this._ifCode(error, code)) {
-                cb(error);
-                return true;
-            }
+    return this;
+};
 
-            return false;
+/**
+ * check error code
+ *
+ * @param {String} code
+ * @param {Function} cb
+ * @return {this}
+ */
+CheckChain.prototype.ifCode = function (code, cb) {
 
-        });
+    var that = this;
 
-        return this;
+    this._checks.push(function (error) {
 
-    }
-
-    /**
-     * set error fallback
-     *
-     * @param {Function} cb
-     * @return {this}
-     */
-    else (cb) {
-        this._checks.push((error) => {
-            this._debug(`else fallback`);
+        if (that._ifCode(error, code)) {
             cb(error);
             return true;
-        });
+        }
 
-        return this;
+        return false;
+
+    });
+
+    return this;
+
+};
+
+/**
+ * set error fallback
+ *
+ * @param {Function} cb
+ * @return {this}
+ */
+CheckChain.prototype.else = function (cb) {
+    var that = this;
+
+    this._checks.push(function (error) {
+        that._debug(`else fallback`);
+        cb(error);
+        return true;
+    });
+
+    return this;
+};
+
+/**
+ * check error
+ *
+ * @param {Error} error
+ * @return {Boolean}
+ * @throw {Error}
+ */
+CheckChain.prototype.check = function (error) {
+
+    if (!error) {
+        if (this._error) {
+            error = this._error;
+        } else {
+            throw new Error('maf-error: no error for check');
+        }
     }
 
-    /**
-     * check error
-     *
-     * @param {Error} error
-     * @return {Boolean}
-     * @throw {Error}
-     */
-    check (error) {
+    this._debug(`maf-error: run checks`);
 
-        if (!error) {
-            if (this._error) {
-                error = this._error;
-            } else {
-                throw new Error('maf-error: no error for check');
-            }
+    var errorProcessed = false;
+
+    for (var i in this._checks) {
+
+        this._debug('step ' + i);
+
+        var check = this._checks[i];
+
+        var callbackTriggered = check(error);
+
+        if (callbackTriggered) {
+            errorProcessed = true;
+            break;
         }
 
-        this._debug(`maf-error: run checks`);
+    }
 
-        var errorProcessed = false;
+    if (!errorProcessed) {
+        this._debug('no checks triggered, throw error');
+        throw error;
+    }
 
-        for (var i in this._checks) {
+    return true;
+};
 
-            this._debug('step ' + i);
+/**
+ * @private
+ * @param {Error} ErrorClass
+ * @param {Error} error
+ * @return {Boolean}
+ */
+CheckChain.prototype._isInstanceOf = function (ErrorClass, error) {
+    var ErrorClassName = ErrorClass.prototype.name;
 
-            var check = this._checks[i];
+    this._debug(`check instanceof: (error.name === ${ErrorClassName})`);
 
-            var callbackTriggered = check(error);
+    var bool = (ErrorClassName === error.name);
 
-            if (callbackTriggered) {
-                errorProcessed = true;
-                break;
-            }
+    this._debug(`(${error.name} === ${ErrorClassName}) = ${bool}`);
 
-        }
+    return bool;
+};
 
-        if (!errorProcessed) {
-            this._debug('no checks triggered, throw error');
-            throw error;
-        }
+/**
+ * @private
+ * @param {Error} error
+ * @param {String} code
+ * @return {Boolean}
+ */
+CheckChain.prototype._ifCode = function (error, code) {
 
+    this._debug(`check code: (error.code === ${code})`);
+
+    var result = (error.code === code);
+
+    this._debug(`(${error.code} === ${code}) = ${result}`);
+
+    if (result) {
+        this._debug(`exec callback on check (error.code === ${code})`);
         return true;
     }
 
-    /**
-     * @private
-     * @param {Error} ErrorClass
-     * @param {Error} error
-     * @return {Boolean}
-     */
-    _isInstanceOf (ErrorClass, error) {
-        var ErrorClassName = ErrorClass.prototype.name;
+    return false;
 
-        this._debug(`check instanceof: (error.name === ${ErrorClassName})`);
+};
 
-        var bool = (ErrorClassName === error.name);
+/**
+ * @private
+ * @param {Error} error
+ * @param {Object} codeChecks
+ * @return {Boolean}
+ */
+CheckChain.prototype._processCodes = function (error, codeChecks) {
 
-        this._debug(`(${error.name} === ${ErrorClassName}) => ${bool}`);
+    for (var code in codeChecks) {
+        var cb = codeChecks[code];
 
-        return bool;
-    }
-
-    /**
-     * @private
-     * @param {Error} error
-     * @param {String} code
-     * @return {Boolean}
-     */
-    _ifCode (error, code) {
-
-        this._debug(`check code: (error.code === ${code})`);
-
-        var result = (error.code === code);
-
-        this._debug(`(${error.code} === ${code}) => ${result}`);
-
-        if (result) {
-            this._debug(`exec callback on check (error.code === ${code})`);
+        if (this._ifCode(error, code) === true) {
+            cb(error);
             return true;
         }
 
-        return false;
-
     }
 
-    /**
-     * @private
-     * @param {Error} error
-     * @param {Object} codeChecks
-     * @return {Boolean}
-     */
-    _processCodes (error, codeChecks) {
+    return false;
 
-        for (var code in codeChecks) {
-            var cb = codeChecks[code];
+};
 
-            if (this._ifCode(error, code) === true) {
-                cb(error);
-                return true;
-            }
+/**
+ * @private
+ */
+CheckChain.prototype._debug = function () {
 
-        }
-
-        return false;
-
+    if (
+        this._logger &&
+        this._logger.debug &&
+        typeof this._logger.debug === 'function'
+    ) {
+        this._logger.debug.apply(this._logger, arguments);
     }
 
-    /**
-     * @private
-     */
-    _debug () {
-
-        if (
-            this._logger &&
-            this._logger.debug &&
-            typeof this._logger.debug === 'function'
-        ) {
-            this._logger.debug.apply(this._logger, arguments);
-        }
-
-    }
-
-}
+};
 
 module.exports = CheckChain;
