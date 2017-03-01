@@ -6,7 +6,7 @@
   "files": [
     "src",
     "index.js",
-    "extendGlobalError.js"
+    "initGlobal.js"
   ],
   "scripts": {
     "test": "./node_modules/.bin/tap test/unit/**/*.js -J --coverage",
