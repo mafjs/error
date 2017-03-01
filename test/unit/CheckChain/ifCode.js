@@ -1,6 +1,6 @@
 var t = require('tap');
 
-var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
+var CheckChain = require(__dirname + '/../../../src/CheckChain');
 
 var createError = function (code, message) {
     var error = new Error(message);

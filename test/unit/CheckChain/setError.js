@@ -1,7 +1,7 @@
 var t = require('tap');
 
-var mafError = require(`${__dirname}/../../../src/mafError`);
-var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
+var mafError = require(__dirname + '/../../../src/mafError');
+var CheckChain = require(__dirname + '/../../../src/CheckChain');
 
 t.test('should use error from setError', function (t) {
     var TestError = mafError.create('TestError', {

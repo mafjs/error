@@ -1,7 +1,7 @@
 var t = require('tap');
 
-var mafError = require(`${__dirname}/../../../src/mafError`);
-var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
+var mafError = require(__dirname + '/../../../src/mafError');
+var CheckChain = require(__dirname + '/../../../src/CheckChain');
 
 t.test('if: check error type, call function callback', function (t) {
     var TestError = mafError.create('TestError', {
@@ -54,11 +54,11 @@ t.test('if: check error type and call code callback', function (t) {
 
     chain
         .if(TestError, {
-            [TestError.CODES.TEST_CODE]: function (error) {
+            'TEST_CODE'/* [TestError.CODES.TEST_CODE]*/: function (error) {
                 t.equal(error.code, TestError.CODES.TEST_CODE);
                 t.end();
             },
-            [TestError.CODES.NOT_FOUND]: function () {
+            'NOT_FOUND'/* [TestError.CODES.NOT_FOUND]*/: function () {
                 t.threw(new Error('catched on code NODE_FOUND'));
             }
         });
@@ -79,7 +79,7 @@ t.test('should call else if error.code not checked', function (t) {
 
     chain
         .if(TestError, {
-            [TestError.CODES.TEST_CODE]: function () {
+            'TEST_CODE'/* [TestError.CODES.TEST_CODE]*/: function (error) {
                 t.threw(new Error('catched on code TEST_CODE'));
             }
         })
@@ -103,7 +103,7 @@ t.test('should call else if error not instanceof Error', function (t) {
 
     chain
         .if(TestError, {
-            [TestError.CODES.TEST_CODE]: function () {
+            'TEST_CODE'/* [TestError.CODES.TEST_CODE]*/: function (error) {
                 t.threw(new Error('catched on code TEST_CODE'));
             }
         })

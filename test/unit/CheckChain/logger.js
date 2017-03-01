@@ -1,5 +1,5 @@
 var t = require('tap');
-var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
+var CheckChain = require(__dirname + '/../../../src/CheckChain');
 
 t.test('use logger.debug method', function (t) {
     var logger = {

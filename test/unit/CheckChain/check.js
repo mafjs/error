@@ -1,6 +1,6 @@
 var t = require('tap');
 
-var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
+var CheckChain = require(__dirname + '/../../../src/CheckChain');
 
 t.test('should throw passed error if no checks', function (t) {
     var chain = new CheckChain();

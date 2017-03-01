@@ -87,7 +87,7 @@ CheckChain.prototype.else = function (cb) {
     var that = this;
 
     this._checks.push(function (error) {
-        that._debug(`else fallback`);
+        that._debug('else fallback');
         cb(error);
         return true;
     });
@@ -112,7 +112,7 @@ CheckChain.prototype.check = function (error) {
         }
     }
 
-    this._debug(`maf-error: run checks`);
+    this._debug('maf-error: run checks');
 
     var errorProcessed = false;
 
@@ -147,11 +147,11 @@ CheckChain.prototype.check = function (error) {
  */
 CheckChain.prototype._isInstanceOf = function (ErrorClass, error) {
 
-    this._debug(`check instanceof: (error instanceof ${ErrorClass.name})`);
+    this._debug('check instanceof: (error instanceof ' + ErrorClass.name + ')');
 
     var bool = (error instanceof ErrorClass);
 
-    this._debug(`(error instanceof ${ErrorClass.name}) = ${bool}`);
+    this._debug('(error instanceof ' + ErrorClass.name + ') = ' + bool);
 
     return bool;
 };
@@ -164,14 +164,14 @@ CheckChain.prototype._isInstanceOf = function (ErrorClass, error) {
  */
 CheckChain.prototype._ifCode = function (error, code) {
 
-    this._debug(`check code: (error.code === ${code})`);
+    this._debug('check code: (error.code ===' + code + ')');
 
     var result = (error.code === code);
 
-    this._debug(`(${error.code} === ${code}) = ${result}`);
+    this._debug('(' + error.code + ' === ' + code + ') = ' + result);
 
     if (result) {
-        this._debug(`exec callback on check (error.code === ${code})`);
+        this._debug('exec callback on check (error.code === ' + code + ')');
         return true;
     }
 

@@ -1,8 +1,8 @@
 var t = require('tap');
 
-var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
+var CheckChain = require(__dirname + '/../../../src/CheckChain');
 
-require(`${__dirname}/../../../initGlobal`);
+require(__dirname + '/../../../initGlobal');
 
 
 t.test('global Error should have create method', function (t) {

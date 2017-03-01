@@ -1,7 +1,7 @@
 var t = require('tap');
 
-var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
-var mafError = require(`${__dirname}/../../../src/mafError`);
+var CheckChain = require(__dirname + '/../../../src/CheckChain');
+var mafError = require(__dirname + '/../../../src/mafError');
 
 t.ok(typeof mafError.createCheckChain === 'function');
 
