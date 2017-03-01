@@ -146,13 +146,12 @@ CheckChain.prototype.check = function (error) {
  * @return {Boolean}
  */
 CheckChain.prototype._isInstanceOf = function (ErrorClass, error) {
-    var ErrorClassName = ErrorClass.prototype.name;
 
-    this._debug(`check instanceof: (error.name === ${ErrorClassName})`);
+    this._debug(`check instanceof: (error instanceof ${ErrorClass.name})`);
 
-    var bool = (ErrorClassName === error.name);
+    var bool = (error instanceof ErrorClass);
 
-    this._debug(`(${error.name} === ${ErrorClassName}) = ${bool}`);
+    this._debug(`(error instanceof ${ErrorClass.name}) = ${bool}`);
 
     return bool;
 };

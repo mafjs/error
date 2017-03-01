@@ -3,7 +3,7 @@ var t = require('tap');
 var mafError = require(`${__dirname}/../../../src/mafError`);
 var CheckChain = require(`${__dirname}/../../../src/CheckChain`);
 
-t.test('is: check error type, call function callback', function (t) {
+t.test('if: check error type, call function callback', function (t) {
     var TestError = mafError.create('TestError', {
         TEST_CODE: 'test_code'
     });
@@ -21,7 +21,7 @@ t.test('is: check error type, call function callback', function (t) {
     chain.check(error);
 });
 
-t.test('is: check error type, call else', function (t) {
+t.test('if: check error type, call else', function (t) {
     var TestError = mafError.create('TestError', {
         TEST_CODE: 'test_code'
     });
@@ -42,7 +42,7 @@ t.test('is: check error type, call else', function (t) {
     chain.check(error);
 });
 
-t.test('is: check error type and call code callback', function (t) {
+t.test('if: check error type and call code callback', function (t) {
     var TestError = mafError.create('TestError', {
         TEST_CODE: 'test_code',
         NOT_FOUND: 'not found'
@@ -67,7 +67,7 @@ t.test('is: check error type and call code callback', function (t) {
 });
 
 
-t.test('is: check error type and call else', function (t) {
+t.test('should call else if error.code not checked', function (t) {
     var TestError = mafError.create('TestError', {
         TEST_CODE: 'test_code',
         NOT_FOUND: 'not found'
@@ -85,6 +85,30 @@ t.test('is: check error type and call else', function (t) {
         })
         .else(function (error) {
             t.equal(error.code, TestError.CODES.NOT_FOUND);
+            t.end();
+        });
+
+    chain.check(error);
+});
+
+t.test('should call else if error not instanceof Error', function (t) {
+    var TestError = mafError.create('TestError', {
+        TEST_CODE: 'test_code',
+        NOT_FOUND: 'not found'
+    });
+
+    var error = new Error('test error message');
+
+    var chain = new CheckChain();
+
+    chain
+        .if(TestError, {
+            [TestError.CODES.TEST_CODE]: function () {
+                t.threw(new Error('catched on code TEST_CODE'));
+            }
+        })
+        .else(function (error) {
+            t.equal(error.message, 'test error message');
             t.end();
         });
 

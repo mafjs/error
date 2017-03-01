@@ -12,7 +12,6 @@ t.test('global Error should have create method', function (t) {
         TEST_CODE: 'test code'
     });
 
-    t.equal(TestError.name, 'Inheritor');
     t.equal(TestError.CODES.TEST_CODE, 'TEST_CODE');
     t.ok(typeof TestError.ensureCheckChain === 'function');
 
