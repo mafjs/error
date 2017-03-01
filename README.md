@@ -11,13 +11,129 @@ checkable errors
 
 
 
-based on [terror](https://github.com/nodules/terror)
+based on [terror](https://github.com/nodules/terror) package
 
 # install
 
-```
+```js
 npm i maf-error
 ```
+
+# why?
+
+errors usually checks with `if`
+
+```js
+// } catch (error) {
+    if (error instanceof TaskError) {
+
+        if (error.code === 'some_error_code') {
+            // action ...
+        } else if (/* ... */) {
+            // ...
+        } else {
+            // ...
+        }
+
+    } else {
+        // ...
+    }
+
+// }
+```
+
+[terror](https://github.com/nodules/terror) package allows check error type and code, but `if` is still here
+
+```js
+// var TaskError = terror.create('TaskError', {SOME_CODE: 'some error code'});
+// } catch (error) {
+
+    error = TaskError.ensureError(error);
+
+    if (TaskError.is(TaskError.CODES.SOME_CODE)) {
+        // action ...
+    } } else if (/* ... */) {
+        // ...
+    } else {
+        // ...
+    }
+
+// }
+```
+
+With promises you can write promise chain using different classes, methods, apis with different error types.
+
+And got all error handling in one catch function.
+
+```js
+// some method: get all tasks in list
+
+api.lists.get(listId)
+    .then((list) => {
+        return api.tasks.find({listId: list.id});
+    })
+    .then((tasks) => {
+        res.json(tasks);
+    })
+    .catch((error) => {
+        // here can get ListError, TaskError from apis
+        // and other errors
+
+        // and if checks here
+
+        if (error instanceof ListError) {
+            if (ListError.is(ListError.CODES.NOT_FOUND, error)) {
+                res.status(404).json('not found');
+            } else if (ListError.is(/* ... */)) {
+                // ...
+            } else {
+                // ...
+            }
+        } else if (error instanceof TaskError) {
+            // many if here
+        } else {
+            logger.error(error);
+            res.status(500).json('server error');
+        }
+
+    });
+```
+
+too much `if`, too much code
+
+using `maf-error`
+
+```js
+require('maf-error/initGlobal');
+
+// same method and  same promise chain
+//
+    .catch((error) => {
+
+        Error.ensureCheckChain(error)
+            .if(ListError, {
+                [ListError.CODES.NOT_FOUND]: (error) => {
+                    res.status(404).json('not found');
+                },
+
+                [ListError.CODES.FORBIDDEN]: (error) => {
+                    // ...
+                }
+            })
+            .if(TaskError, {
+                // ...
+            })
+            .else((error) => {
+                logger.error(error);
+                res.status(500).json('server error');
+            })
+            .check();
+
+    });
+
+```
+
+clean and simple imho
 
 # usage
 
