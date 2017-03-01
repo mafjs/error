@@ -13,6 +13,9 @@
     "test:cov": "npm test -- --coverage-report=html",
     "postversion": "git push origin && git push --tags"
   },
+  "engines": {
+    "node": ">=4"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mafjs/error.git"
