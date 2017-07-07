@@ -79,7 +79,7 @@ t.test('should call else if error.code not checked', function (t) {
 
     chain
         .if(TestError, {
-            'TEST_CODE'/* [TestError.CODES.TEST_CODE]*/: function (error) {
+            'TEST_CODE'/* [TestError.CODES.TEST_CODE]*/: function () {
                 t.threw(new Error('catched on code TEST_CODE'));
             }
         })
@@ -103,7 +103,7 @@ t.test('should call else if error not instanceof Error', function (t) {
 
     chain
         .if(TestError, {
-            'TEST_CODE'/* [TestError.CODES.TEST_CODE]*/: function (error) {
+            'TEST_CODE'/* [TestError.CODES.TEST_CODE]*/: function () {
                 t.threw(new Error('catched on code TEST_CODE'));
             }
         })
