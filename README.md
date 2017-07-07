@@ -2,6 +2,8 @@
 
 checkable errors
 
+[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
+
 [![bitHound Overall Score](https://www.bithound.io/github/mafjs/error/badges/score.svg)](https://www.bithound.io/github/mafjs/error)
 [![bitHound Dependencies](https://www.bithound.io/github/mafjs/error/badges/dependencies.svg)](https://www.bithound.io/github/mafjs/error/master/dependencies/npm)
 [![Build Status](https://travis-ci.org/mafjs/error.svg?branch=master)](https://travis-ci.org/mafjs/error)
