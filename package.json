@@ -12,7 +12,8 @@
     "lint": "eslint -c .eslintrc.js --ignore-path .gitignore .",
     "test": "npm run lint && tap test/unit/**/*.js -J --coverage",
     "test:cov": "npm test -- --coverage-report=html",
-    "postversion": "git push origin && git push --tags"
+    "postversion": "git push origin && git push --tags",
+    "prepush": "npm run lint"
   },
   "engines": {
     "node": ">=4"
@@ -35,6 +36,7 @@
     "babel-eslint": "7.x",
     "coveralls": "2.x",
     "eslint": "3.x",
+    "husky": "^0.14.3",
     "log4js-nested": "1.x",
     "tap": "10.x"
   },
