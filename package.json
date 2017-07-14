@@ -1,6 +1,6 @@
 {
   "name": "maf-error",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "checkable errors",
   "main": "index.js",
   "files": [
