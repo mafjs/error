@@ -25,10 +25,10 @@ module.exports = function (terror) {
 
     terror.createCheckChain = createCheckChain;
 
-    terror._create = terror.create;
+    terror.__create__ = terror.create;
 
     terror.create = function (name, codes) {
-        var Inheritor = this._create(name, codes);
+        var Inheritor = this.__create__(name, codes);
 
         Inheritor.ensureCheckChain = ensureCheckChain;
 
