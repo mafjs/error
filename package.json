@@ -41,7 +41,7 @@
     "tap": "10.x"
   },
   "dependencies": {
-    "terror": "1.3.x"
+    "terror": "1.4.x"
   },
   "nyc": {
     "all": true,
