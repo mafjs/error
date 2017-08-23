@@ -2,6 +2,10 @@ var CheckChain = require('./CheckChain');
 
 module.exports = function (terror) {
 
+    if (terror.prototype.checkable) {
+        return terror;
+    }
+
     var ensureCheckChain = function (error, logger) {
 
         var chain = null;

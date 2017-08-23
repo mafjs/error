@@ -3,6 +3,10 @@ var mafError = require('./mafError');
 
 module.exports = function (errorClass) {
 
+    if (errorClass.prototype.checkable) {
+        return errorClass;
+    }
+
     // static methods
 
     errorClass.ensureCheckChain = function (error, logger) {
