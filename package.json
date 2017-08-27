@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/mafjs/error#readme",
   "devDependencies": {
-    "@maf/eslint-config": "0.1.x",
+    "@maf/eslint-config": "0.2.x",
     "babel-eslint": "7.x",
     "coveralls": "2.x",
     "eslint": "4.x",
