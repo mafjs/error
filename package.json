@@ -33,7 +33,7 @@
   "homepage": "https://github.com/mafjs/error#readme",
   "devDependencies": {
     "@maf/eslint-config": "0.2.x",
-    "babel-eslint": "7.x",
+    "babel-eslint": "8.x",
     "coveralls": "2.x",
     "eslint": "4.x",
     "husky": "^0.14.3",
