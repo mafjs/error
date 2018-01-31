@@ -38,7 +38,7 @@
     "eslint": "4.x",
     "husky": "^0.14.3",
     "log4js-nested": "1.x",
-    "tap": "10.x"
+    "tap": "11.x"
   },
   "dependencies": {
     "terror": "1.4.x"
